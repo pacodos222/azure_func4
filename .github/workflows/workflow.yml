@@ -1,12 +1,14 @@
-name: Run Azure Login with User-assigned Managed Identity
+name: Read Flag from Azure Blob
 on: [push]
 
 jobs:
-  build-and-deploy:
-    runs-on: windows-latest
+  read-blob:
+    runs-on: ubuntu-latest
+
     permissions:
-      id-token: write   # OBLIGATORIO para OIDC
+      id-token: write
       contents: read
+
     steps:
       - name: Azure login
         uses: azure/login@v2
@@ -14,6 +16,20 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: Verify
-        run: az account show
-          
+
+      - name: Read flag.txt from Blob
+        run: |
+          az storage blob download \
+            --account-name iamazurelab34d6eaaa7 \
+            --container-name flag \
+            --name flag.txt \
+            --file flag.txt \
+            --auth-mode login
+
+          FLAG=$(cat flag.txt)
+          echo "::add-mask::$FLAG"
+          echo "FLAG=$FLAG" >> $GITHUB_ENV
+          cat flag.txt
+
+      - name: Show flag
+        run: echo "Flag es -> ${{ env.FLAG }}"
