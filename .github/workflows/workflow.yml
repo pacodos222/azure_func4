@@ -1,4 +1,4 @@
-name: Run Azure Login with OIDC
+name: Run Azure Login with user-assigned managed identity
 on: [push]
 
 jobs:
@@ -9,6 +9,7 @@ jobs:
       uses: azure/login@v2
       with:
         auth-type: IDENTITY
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         enable-AzPSSession: true
@@ -20,7 +21,7 @@ jobs:
       with:
         azcliversion: latest
         inlineScript: |
-          az account show
+          az account show 
           # You can write your Azure CLI inline scripts here.
 
     - name: Azure PowerShell script
