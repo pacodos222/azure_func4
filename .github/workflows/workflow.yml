@@ -25,8 +25,4 @@ jobs:
             --name flag.txt \
             --file flag.txt \
             --auth-mode login
-
-          FLAG=$(cat flag.txt)
-          echo "::add-mask::$FLAG"
-          echo "FLAG=$FLAG" >> $GITHUB_ENV
           cat flag.txt
